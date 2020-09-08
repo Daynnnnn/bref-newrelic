@@ -2,6 +2,7 @@ ARG PHP_VERSION
 FROM bref/tmp/cleaned-build-php-$PHP_VERSION
 ARG PHP_VERSION
 
+COPY bootstrap-php /opt/bootstrap-php
 COPY bootstrap /opt/bootstrap
 COPY php.ini /opt/bref/etc/php/conf.d/bref.ini
 COPY php-fpm.conf /opt/bref/etc/php-fpm.conf

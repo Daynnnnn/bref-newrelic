@@ -124,6 +124,25 @@ RUN pecl install redis
 RUN pecl install APCu
 RUN pecl install imagick
 
+## Install NewRelic
+
+RUN \
+  curl -L https://download.newrelic.com/php_agent/release/newrelic-php5-9.13.0.270-linux.tar.gz | tar -C /tmp -zx && \
+  export NR_INSTALL_USE_CP_NOT_LN=1 && \
+  export NR_INSTALL_DAEMONPATH=${INSTALL_DIR}/sbin/newrelic-daemon && \
+  export NR_INSTALL_SILENT=1 && \
+  /tmp/newrelic-php5-*/newrelic-install install && \
+  rm -rf /tmp/newrelic-php5-* /tmp/nrinstall*
+
+RUN echo $' \n\
+extension = "newrelic.so" \n\
+newrelic.logfile = "/dev/stderr" \n\
+newrelic.loglevel = "error" \n\
+' >> ${INSTALL_DIR}/etc/php/php.ini
+
+RUN mkdir -p ${INSTALL_DIR}/etc/newrelic && \
+  echo "loglevel=error" > ${INSTALL_DIR}/etc/newrelic/newrelic.cfg && \
+  echo "logfile=/dev/null" >> ${INSTALL_DIR}/etc/newrelic/newrelic.cfg
 
 # Run the next step in the previous environment because the `clean.sh` script needs `find`,
 # which isn't installed by default
